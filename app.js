@@ -23,9 +23,12 @@ app.post('/login', (req, res) => {
 
 
 app.get("/",(req,res) => {
-
-    res.status(200)
-        .send(`
+    fs.readFile("chat.txt","utf8", (err,data) => {
+        if (err) {
+          res.status(500).send('Error reading chat log');
+        }else{
+            res.status(200)
+        .send( data + `
             <form action="/" method ="POST" >
             <input type="hidden" name="username" id="username">
             <input type="text" name="message">
@@ -39,8 +42,9 @@ app.get("/",(req,res) => {
                 }
             </script>
             `)
+        }
+    })
 })
-
 
 app.post("/", (req,res) => {
     const username = req.body.username
@@ -64,6 +68,7 @@ app.get('/', (req, res) => {
       });
       
   });
+
 
 
 app.use((req,res, next) => {

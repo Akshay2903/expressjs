@@ -13,3 +13,8 @@ akshay : jalsjnsj
 akshay : hi new
  : hi
 random user : hello
+akshay : hi akshay
+akshay : hi vasu
+vasu : hi akshay'
+akshay : how are you
+vasu : i am fine you tell 
