@@ -1,78 +1,29 @@
+const rootDir = require('./utils/path')
+const path = require('path')
 const express = require('express')
 const bodyParser = require('body-parser')
-const fs = require('fs')
 
 const app = express();
 
 app.use(bodyParser.urlencoded({extended:false}))
+const adminRoutes = require('./routes/admin')
+const shopRoutes = require('./routes/shop')
+const contactRoutes = require('./routes/contactus');
 
 
-app.get("/login",(req,res) => {
-    res.status(200).send('<form action="/login" method="POST"><input type="text" name="username"><button type="submit">Login</button></form>')
+app.use('/admin',adminRoutes)
+app.use('/shop',shopRoutes)
+app.use('/contactus', contactRoutes)
 
+app.get('/success',(req,res,next) => {
+    res.status(200).sendFile(path.join(rootDir, 'views', 'success.html'))
 })
-app.post('/login', (req, res) => {
-    const username = req.body.username;
-    res.send(`
-        <script>
-            localStorage.setItem('username', '${username}');
-            window.location.href = '/';
-        </script>
-    `);
-});
-
-
-app.get("/",(req,res) => {
-    fs.readFile("chat.txt","utf8", (err,data) => {
-        if (err) {
-          res.status(500).send('Error reading chat log');
-        }else{
-            res.status(200)
-        .send( data + `
-            <form action="/" method ="POST" >
-            <input type="hidden" name="username" id="username">
-            <input type="text" name="message">
-            <button type = "submit">Send</button>
-            </form>
-
-            <script>
-                var username = localStorage.getItem('username');
-                if (username) {
-                    document.getElementById('username').value = username;
-                }
-            </script>
-            `)
-        }
-    })
-})
-
-app.post("/", (req,res) => {
-    const username = req.body.username
-    const message = req.body.message
-
-    fs.appendFile("chat.txt", `${username} : ${message}\n`, (err) => {
-        if(err){
-            console.error(err)
-        }
-    })
-    res.redirect("/")
-})
-
-app.get('/', (req, res) => {
-    fs.readFile('chat.txt', 'utf8', (err, data) => {
-        if (err) {
-          res.status(500).send('Error reading chat log');
-        } else {
-          res.status(200).send(data);
-        }
-      });
-      
-  });
-
-
-
 app.use((req,res, next) => {
-    res.status(404).send('<h1>Page Not Found</h1>')
+    res.status(404).sendFile(path.join(rootDir, 'views', '404.html'))
+})
+
+app.use("/",(req,res,next) => {
+    res.send('<h1>Welcome to ExpressJs</h1>')
 })
 
 
